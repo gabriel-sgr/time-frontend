@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getCurrentSessions, getCurrentSession, getAnnouncements, getSpecialActivitiesForDisplay } from '../services/api';
+import { getCurrentSessions, getCurrentSession, getAnnouncements, getSpecialActivitiesForDisplay, getClasses } from '../services/api';
 import { FiClock, FiUser, FiMapPin, FiBook, FiAlertCircle, FiSettings, FiStar } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -14,23 +14,34 @@ export default function DisplayPage() {
   const [currentSession, setCurrentSession] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
   const [specialActivities, setSpecialActivities] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState(null);
   const [settings, setSettings] = useState(null);
+  const [showDebug, setShowDebug] = useState(true);
 
   const fetchData = useCallback(async () => {
     try {
-      const [sessRes, currSessRes, annRes, specialRes] = await Promise.all([
+      const [sessRes, currSessRes, annRes, specialRes, classesRes] = await Promise.all([
         getCurrentSessions(),
         getCurrentSession(),
         getAnnouncements(),
-        getSpecialActivitiesForDisplay()
+        getSpecialActivitiesForDisplay(),
+        getClasses()
       ]);
       setSessions(sessRes.data);
       setCurrentSession(currSessRes.data);
       setAnnouncements(annRes.data);
       setSpecialActivities(specialRes.data || []);
+      setClasses(classesRes.data || []);
+      console.debug('DisplayPage fetchData:', {
+        sessions: sessRes.data,
+        currentSession: currSessRes.data,
+        announcements: annRes.data,
+        specialActivities: specialRes.data,
+        classes: classesRes.data
+      });
       setError(null);
     } catch (err) {
       setError('Connection lost. Retrying...');
@@ -148,6 +159,35 @@ export default function DisplayPage() {
 
   const period = getPeriodInfo();
 
+  const parseTimeToDate = (timeStr) => {
+    if (!timeStr) return null;
+    const parts = timeStr.split(':').map((p) => parseInt(p, 10));
+    if (parts.length < 2 || Number.isNaN(parts[0]) || Number.isNaN(parts[1])) return null;
+    return new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate(), parts[0], parts[1]);
+  };
+
+  const formatRemaining = (ms) => {
+    if (ms <= 0) return 'Ended';
+    const totalSec = Math.floor(ms / 1000);
+    const hrs = Math.floor(totalSec / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    if (hrs > 0) return `${hrs}h ${mins}m`; 
+    return `${Math.max(0, mins)}m`;
+  };
+
+  const getSessionProgress = (session) => {
+    const start = parseTimeToDate(session.start_time);
+    const end = parseTimeToDate(session.end_time);
+    if (!start || !end) return { percent: 0, remainingText: '' };
+    // handle sessions that span midnight
+    if (end <= start) end.setDate(end.getDate() + 1);
+    const total = end.getTime() - start.getTime();
+    const elapsed = currentTime.getTime() - start.getTime();
+    const remaining = end.getTime() - currentTime.getTime();
+    const percent = total > 0 ? Math.max(0, Math.min(100, Math.round((elapsed / total) * 100))) : 0;
+    return { percent, remainingText: remaining > 0 ? formatRemaining(remaining) : 'Ended' };
+  };
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-900 overflow-hidden">
       {/* Header */}
@@ -219,6 +259,48 @@ export default function DisplayPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {/* Render live session cards directly from `sessions` to avoid name-matching issues */}
+              {sessions.map((active) => {
+                const prog = getSessionProgress(active);
+                return (
+                <div key={`session-${active._id}`} className={`rounded-xl p-4 shadow-lg transition-all duration-500 animate-fade-in bg-white border border-gray-200`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xl font-extrabold text-school-primary">{active.class_name || active.class}</h3>
+                    <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">LIVE</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-2">
+                    <FiBook className="text-brand-500 shrink-0" size={16} />
+                    <span className="font-semibold text-gray-800 text-sm truncate">{active.subject_name || active.subject}</span>
+                  </div>
+
+                  {active.teacher_name && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <FiUser className="text-green-600 shrink-0" size={16} />
+                      <span className="text-gray-600 text-sm truncate">{active.teacher_name}</span>
+                    </div>
+                  )}
+
+                  {active.classroom_name && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <FiMapPin className="text-red-500 shrink-0" size={16} />
+                      <span className="text-gray-600 text-sm truncate">{active.classroom_name}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 mt-3 pt-2 border-t border-gray-100">
+                    <FiClock className="text-gray-400 shrink-0" size={14} />
+                    <span className="text-gray-500 text-xs font-mono">{active.start_time} — {active.end_time}</span>
+                    <span className="ml-2 text-xs text-gray-500">•</span>
+                    <span className="ml-2 text-xs font-mono text-gray-600">{prog.remainingText}</span>
+                  </div>
+
+                  <div className="mt-2 h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-school-primary" style={{ width: `${prog.percent}%` }} />
+                  </div>
+                </div>
+                )
+              })}
               {/* Special Activities */}
               {getRelevantSpecialActivities().map((activity) => (
                 <div
@@ -261,51 +343,7 @@ export default function DisplayPage() {
                 </div>
               ))}
 
-              {/* Regular Sessions */}
-              {sessions.map((session) => (
-                <div
-                  key={session._id}
-                  className={`rounded-xl p-4 shadow-lg transition-all duration-500 animate-fade-in ${
-                    session.is_temporary
-                      ? 'bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300'
-                      : 'bg-white border border-gray-200'
-                  }`}
-                >
-                  {/* Class Name */}
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xl font-extrabold text-school-primary">{session.class_name}</h3>
-                    {session.is_temporary && (
-                      <span className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse-slow">
-                        TEMP
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Subject */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <FiBook className="text-brand-500 shrink-0" size={16} />
-                    <span className="font-semibold text-gray-800 text-sm truncate">{session.subject_name}</span>
-                  </div>
-
-                  {/* Teacher */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <FiUser className="text-green-600 shrink-0" size={16} />
-                    <span className="text-gray-600 text-sm truncate">{session.teacher_name}</span>
-                  </div>
-
-                  {/* Room */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <FiMapPin className="text-red-500 shrink-0" size={16} />
-                    <span className="text-gray-600 text-sm truncate">{session.classroom_name}</span>
-                  </div>
-
-                  {/* Time */}
-                  <div className="flex items-center gap-2 mt-3 pt-2 border-t border-gray-100">
-                    <FiClock className="text-gray-400 shrink-0" size={14} />
-                    <span className="text-gray-500 text-xs font-mono">{session.start_time} — {session.end_time}</span>
-                  </div>
-                </div>
-              ))}
+              {/* Regular sessions are displayed via class cards above */}
             </div>
           )}
         </div>
@@ -391,6 +429,8 @@ export default function DisplayPage() {
           )}
         </div>
       </div>
+      {/* Debug panel - toggleable */}
+     
     </div>
   );
 }
