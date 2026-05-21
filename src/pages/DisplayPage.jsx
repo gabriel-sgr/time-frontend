@@ -385,7 +385,7 @@ export default function DisplayPage() {
                     {ann.type === 'text' && (
                       <div className="text-center px-4">
                         {ann.title && <h3 className="text-white text-xl font-bold mb-3">{ann.title}</h3>}
-                        <p className="text-white text-base leading-relaxed whitespace-pre-wrap">{ann.content}</p>
+                        <p className="text-white leading-relaxed whitespace-pre-wrap" style={{ fontSize: `${ann.fontSize || 24}px` }}>{ann.content}</p>
                       </div>
                     )}
                     {ann.type === 'image' && (
