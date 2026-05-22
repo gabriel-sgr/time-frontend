@@ -12,6 +12,7 @@ export default function ManageSettings() {
   const [assemblyStartTime, setAssemblyStartTime] = useState('07:50');
   const [assemblyEndTime, setAssemblyEndTime] = useState('08:10');
   const [logoFile, setLogoFile] = useState(null);
+  const [backgroundFile, setBackgroundFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -102,6 +103,53 @@ export default function ManageSettings() {
     } catch (err) {
       console.error('Error updating assembly settings:', err);
       alert(err.response?.data?.message || 'Failed to update assembly settings');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleBackgroundUpload = async (e) => {
+    e.preventDefault();
+    if (!backgroundFile) return alert('Please select a background image');
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('background', backgroundFile);
+      
+      await axios.post(`${API_URL}/settings/background`, formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      });
+      
+      setBackgroundFile(null);
+      fetchSettings();
+      alert('Background image updated successfully');
+    } catch (err) {
+      console.error('Error uploading background:', err);
+      alert(err.response?.data?.message || 'Failed to upload background image');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleBackgroundDelete = async () => {
+    if (!window.confirm('Are you sure you want to remove the background image?')) return;
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      await axios.delete(`${API_URL}/settings/background`, {
+        headers: { ...(token && { Authorization: `Bearer ${token}` }) }
+      });
+      
+      fetchSettings();
+      alert('Background image removed successfully');
+    } catch (err) {
+      console.error('Error removing background:', err);
+      alert(err.response?.data?.message || 'Failed to remove background image');
     } finally {
       setSaving(false);
     }
@@ -223,6 +271,62 @@ export default function ManageSettings() {
             <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50 flex items-center gap-2">
               <FiSave /> {saving ? 'Saving...' : 'Update Assembly Settings'}
             </button>
+          </form>
+        </div>
+
+        {/* Background Image */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Display Background Image</h2>
+          <p className="text-sm text-gray-600 mb-4">Background image will be applied only to the timetable cards area, not to the navbar or announcements.</p>
+          
+          <div className="mb-4">
+            {settings?.background_image_path ? (
+              <div className="relative w-full h-48 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+                <img
+                  src={`${API_BASE}${settings.background_image_path}`}
+                  alt="Background"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-full h-48 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400">
+                No background image
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={handleBackgroundUpload} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Upload Background Image</label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-brand-400 transition-colors"
+                onClick={() => document.getElementById('background-input').click()}>
+                <FiUpload className="mx-auto text-gray-400 mb-2" size={32} />
+                <p className="text-gray-500 text-sm">{backgroundFile ? backgroundFile.name : 'Click to select background image'}</p>
+                <input
+                  id="background-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setBackgroundFile(e.target.files[0])}
+                  className="hidden"
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Supported formats: JPEG, PNG, GIF, WebP, SVG (Max 5MB)</p>
+            </div>
+            <div className="flex gap-2">
+              <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50 flex items-center gap-2 flex-1">
+                <FiSave /> {saving ? 'Uploading...' : 'Update Background'}
+              </button>
+              {settings?.background_image_path && (
+                <button 
+                  type="button" 
+                  disabled={saving} 
+                  onClick={handleBackgroundDelete}
+                  className="btn-danger disabled:opacity-50"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
           </form>
         </div>
       </div>

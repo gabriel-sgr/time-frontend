@@ -57,3 +57,65 @@ body { margin: 0; background: #f0f4f8; }
 .btn-green {
   @apply bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200;
 }
+
+/* Responsive Display Enhancements */
+/* Mobile (xs: < 640px) - default Tailwind spacing */
+/* Tablet (sm: 640px - md: 768px) */
+/* Laptop (lg: 1024px - xl: 1280px) */
+/* Large Laptop/TV (2xl: 1536px - 3xl: 1920px) */
+/* Extra Large TV (4xl: 2560px+) */
+
+/* Line clamping utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Background blur overlay for better text readability on background images */
+.bg-blur-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive grid for TV displays */
+@media (min-width: 2560px) {
+  /* Extra large TV (4K) - even larger cards */
+  body { font-size: 18px; }
+  
+  .text-xl { font-size: 1.5rem; line-height: 2rem; }
+  .text-lg { font-size: 1.25rem; line-height: 1.75rem; }
+  .gap-3 { gap: 1.5rem; }
+  .gap-2 { gap: 1rem; }
+  .p-4 { padding: 2rem; }
+  .px-4 { padding-left: 2rem; padding-right: 2rem; }
+  .py-3 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+}
+
+@media (min-width: 1920px) and (max-width: 2559px) {
+  /* Large TV (FHD/QHD) - enhanced spacing */
+  body { font-size: 16px; }
+  
+  .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+  .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  .gap-3 { gap: 1.25rem; }
+}
+
+@media (max-width: 640px) {
+  /* Mobile - compact layout */
+  body { font-size: 14px; }
+  
+  /* Ensure readability on small screens */
+  .text-sm { font-size: 12px; }
+  .text-xs { font-size: 10px; }
+}
+
+/* Animation for fade in effect */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
