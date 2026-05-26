@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiUsers, FiBook, FiBookOpen, FiGrid, FiClock, FiCalendar, FiImage, FiLogOut, FiMenu, FiX, FiMapPin, FiSettings } from 'react-icons/fi';
+import { FiHome, FiUsers, FiBook, FiBookOpen, FiGrid, FiClock, FiCalendar, FiImage, FiLogOut, FiMenu, FiX, FiMapPin, FiSettings, FiUser } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -19,6 +19,7 @@ const navItems = [
   { to: '/admin/timetable', icon: FiCalendar, label: 'Timetable' },
   { to: '/admin/announcements', icon: FiImage, label: 'Announcements' },
   { to: '/admin/settings', icon: FiSettings, label: 'Settings' },
+  { to: '/admin/profile', icon: FiUser, label: 'My Profile' },
 ];
 
 export default function AdminLayout() {

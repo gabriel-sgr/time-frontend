@@ -1,4 +1,10 @@
 {
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "env": {
+    "TZ": "Africa/Kigali"
+  },
   "rewrites": [
     {
       "source": "/(.*)",

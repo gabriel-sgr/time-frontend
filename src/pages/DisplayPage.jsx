@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getCurrentSessions, getCurrentSession, getAnnouncements, getSpecialActivitiesForDisplay, getClasses } from '../services/api';
+import { formatKigaliTime, formatKigaliDate } from '../utils/timezoneUtils';
 import { FiClock, FiUser, FiMapPin, FiBook, FiAlertCircle, FiSettings, FiStar } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -104,11 +105,11 @@ export default function DisplayPage() {
   }, [announcements.length]);
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return formatKigaliTime(date);
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return formatKigaliDate(date, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   };
 
   const getDayPeriod = () => {

@@ -18,6 +18,7 @@ api.interceptors.request.use((config) => {
 // Auth
 export const login = (credentials) => api.post('/auth/login', credentials);
 export const getMe = () => api.get('/auth/me');
+export const updateProfile = (data) => api.put('/auth/update-profile', data);
 
 // Classes
 export const getClasses = () => api.get('/classes');
@@ -86,6 +87,8 @@ export const updateTimetableEntry = (id, data) => api.put(`/timetable/${id}`, da
 export const deleteTimetableEntry = (id) => api.delete(`/timetable/${id}`);
 export const generateTimetable = () => api.post('/timetable/auto-generate');
 export const validateTimetable = () => api.get('/timetable/validate');
+export const getClassTimetable = (classId) => api.get(`/timetable/class/${classId}`);
+export const downloadClassTimetable = (classId) => api.get(`/timetable/class/${classId}/download`, { responseType: 'blob' });
 
 // Announcements
 export const getAnnouncements = () => api.get('/announcements');
