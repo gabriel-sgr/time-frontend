@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getTeachers, getClassrooms, getSubjects, generateTimetable, validateTimetable, downloadClassTimetable } from '../../services/api';
+import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getTeachers, getClassrooms, getSubjects, generateTimetable, validateTimetable } from '../../services/api';
 import axios from 'axios';
-import { FiPlus, FiTrash2, FiFilter, FiAlertCircle, FiGrid, FiCpu, FiEdit, FiDownload } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiFilter, FiAlertCircle, FiGrid, FiCpu, FiEdit } from 'react-icons/fi';
 
 const DAYS = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -108,25 +108,6 @@ export default function ManageTimetable() {
     }
   };
 
-  const handleDownloadTimetable = async (classId, className) => {
-    try {
-      const response = await downloadClassTimetable(classId);
-      
-      // Create blob and download
-      const blob = new Blob([response.data], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `timetable_${className}_${new Date().getTime()}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      alert(`Error downloading timetable: ${error.response?.data?.message || error.message}`);
-    }
-  };
-
   const handleGenerateTimetable = async () => {
     try {
       setLoading(true);
@@ -177,8 +158,8 @@ export default function ManageTimetable() {
       { time: '09:30-10:10', label: 'Period 3' },
       { time: '10:10-10:25', label: 'Break' },
       { time: '10:25-11:05', label: 'Period 4' },
-      { time: '11:05-11:45', label: 'Period 5' },
-      { time: '11:45-12:25', label: 'Period 6' },
+      { time: '11:05-11:55', label: 'Period 5' },
+      { time: '11:55-12:25', label: 'Period 6' },
       { time: '12:25-13:30', label: 'Lunch' },
       { time: '13:30-14:10', label: 'Period 7' },
       { time: '14:10-14:50', label: 'Period 8' },
@@ -291,27 +272,6 @@ export default function ManageTimetable() {
         <span className="text-sm text-gray-500">{filtered.length} entries</span>
       </div>
 
-      {/* Download Timetables Section */}
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-        <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-          <FiDownload size={16} />
-          Download Class Timetables
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-          {classes.map(cls => (
-            <button
-              key={cls._id}
-              onClick={() => handleDownloadTimetable(cls._id, cls.name)}
-              className="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
-              title={`Download timetable for ${cls.name}`}
-            >
-              <FiDownload size={14} />
-              {cls.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Timetable Grid */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden overflow-x-auto">
         {loading ? <div className="p-8 text-center text-gray-400">Loading...</div> :
@@ -344,23 +304,21 @@ export default function ManageTimetable() {
                     return <td key={day} className="px-3 py-2.5 text-center bg-gray-100">-</td>;
                   }
                   
-                  // Handle break and lunch - display as non-assignable
+                  // Find entry for this time slot and day
+                  const [start, end] = period.time.split('-');
+                  const entry = filtered.find(e => e.day_of_week === day && e.start_time === start && e.end_time === end);
+                  
+                  // Handle break and lunch
                   if (period.label === 'Break' || period.label === 'Lunch') {
                     return <td key={day} className="px-3 py-2.5 text-center bg-yellow-50 text-yellow-700">{period.label}</td>;
                   }
                   
-                  // Handle assembly - display as non-assignable
-                  if (period.isAssembly) {
+                  // Handle assembly
+                  if (period.label === 'Assembly') {
                     return <td key={day} className="px-3 py-2.5 text-center bg-purple-50 text-purple-700">Assembly</td>;
                   }
                   
-                  // Find entry for this time slot and day - parse times correctly
-                  const timeParts = period.time.split('-');
-                  const start = timeParts[0]; // e.g., '11:05'
-                  const end = timeParts[1];   // e.g., '11:45'
-                  const entry = filtered.find(e => e.day_of_week === day && e.start_time === start && e.end_time === end);
-                  
-                  // Show subject or empty - all regular periods are assignable
+                  // Show subject or empty
                   return (
                     <td key={day} className="px-3 py-2.5 text-center">
                       {entry ? (

@@ -15,7 +15,6 @@ import ManageTimePeriods from './pages/admin/ManageTimePeriods';
 import ManageTimetable from './pages/admin/ManageTimetable';
 import ManageAnnouncements from './pages/admin/ManageAnnouncements';
 import ManageSettings from './pages/admin/ManageSettings';
-import ManageAdminProfile from './pages/admin/ManageAdminProfile';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -41,7 +40,6 @@ export default function App() {
         <Route path="timetable" element={<ManageTimetable />} />
         <Route path="announcements" element={<ManageAnnouncements />} />
         <Route path="settings" element={<ManageSettings />} />
-        <Route path="profile" element={<ManageAdminProfile />} />
       </Route>
       <Route path="/" element={<Navigate to="/display" />} />
       <Route path="*" element={<Navigate to="/display" />} />

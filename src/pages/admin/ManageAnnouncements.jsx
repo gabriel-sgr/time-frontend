@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { getAllAnnouncements, deleteAnnouncement } from '../../services/api';
-import { formatKigaliDate } from '../../utils/timezoneUtils';
 import { FiPlus, FiTrash2, FiUpload, FiEdit2 } from 'react-icons/fi';
 import axios from 'axios';
 
@@ -232,10 +231,10 @@ export default function ManageAnnouncements() {
                 <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 capitalize">{ann.type}</span>
                 {ann.title && <h3 className="font-semibold text-gray-800 truncate">{ann.title}</h3>}
               </div>
-              <p className="text-xs text-gray-500">Created: {formatKigaliDate(new Date(ann.createdAt))}</p>
+              <p className="text-xs text-gray-500">Created: {new Date(ann.createdAt).toLocaleDateString()}</p>
               {ann.expires_at && (
                 <p className="text-xs text-orange-600 mt-1">
-                  Expires: {formatKigaliDate(new Date(ann.expires_at))}
+                  Expires: {new Date(ann.expires_at).toLocaleDateString()}
                   {new Date(ann.expires_at) < new Date() && ' (Expired)'}
                 </p>
               )}
