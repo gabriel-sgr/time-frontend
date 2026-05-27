@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiHome, FiUsers, FiBook, FiBookOpen, FiGrid, FiClock, FiCalendar, FiImage, FiLogOut, FiMenu, FiX, FiMapPin, FiSettings } from 'react-icons/fi';
+import { FiHome, FiUsers, FiBook, FiBookOpen, FiGrid, FiClock, FiCalendar, FiImage, FiLogOut, FiMenu, FiX, FiMapPin, FiSettings, FiUser } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -90,7 +90,23 @@ export default function AdminLayout() {
           <div className="p-4 border-t border-white/10">
             <p className="text-blue-200 text-xs mb-2">Logged in as</p>
             <p className="text-white font-medium text-sm">{user?.fullName || 'Head Teacher'}</p>
-            <button onClick={handleLogout} className="flex items-center gap-2 mt-3 text-blue-200 hover:text-white text-sm transition-colors">
+            <div className="flex gap-2 mt-3">
+              <NavLink
+                to="/admin/profile"
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 text-sm transition-colors px-2 py-1.5 rounded ${
+                    isActive
+                      ? 'bg-white/20 text-white'
+                      : 'text-blue-200 hover:text-white'
+                  }`
+                }
+              >
+                <FiUser size={14} />
+                Profile
+              </NavLink>
+            </div>
+            <button onClick={handleLogout} className="flex items-center gap-2 mt-2 text-blue-200 hover:text-white text-sm transition-colors">
               <FiLogOut size={16} /> Logout
             </button>
           </div>

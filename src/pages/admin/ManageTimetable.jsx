@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getTeachers, getClassrooms, getSubjects, generateTimetable, validateTimetable } from '../../services/api';
+import { getTimetable, createTimetableEntry, updateTimetableEntry, deleteTimetableEntry, getClasses, getTeachers, getClassrooms, getSubjects, generateTimetable, validateTimetable, downloadTimetablePDF, downloadTimetableCSV } from '../../services/api';
 import axios from 'axios';
-import { FiPlus, FiTrash2, FiFilter, FiAlertCircle, FiGrid, FiCpu, FiEdit } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiFilter, FiAlertCircle, FiGrid, FiCpu, FiEdit, FiDownload } from 'react-icons/fi';
 
 const DAYS = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -140,6 +140,38 @@ export default function ManageTimetable() {
     }
   };
 
+  const handleDownloadPDF = async (classId, className) => {
+    try {
+      const response = await downloadTimetablePDF(classId);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `timetable_${className.replace(/\s+/g, '_')}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('Error downloading PDF: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const handleDownloadCSV = async (classId, className) => {
+    try {
+      const response = await downloadTimetableCSV(classId);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `timetable_${className.replace(/\s+/g, '_')}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('Error downloading CSV: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
   const filtered = entries.filter(e => {
     if (filterClass && e.class_id?._id !== filterClass) return false;
     return true;
@@ -270,6 +302,43 @@ export default function ManageTimetable() {
           {classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
         </select>
         <span className="text-sm text-gray-500">{filtered.length} entries</span>
+      </div>
+
+      {/* Download Timetables */}
+      <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <FiDownload /> Download Timetables
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {classes.length === 0 ? (
+            <p className="text-gray-500 col-span-full">No classes available</p>
+          ) : (
+            classes.map(c => (
+              <div key={c._id} className="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{c.name}</h3>
+                  <p className="text-sm text-gray-500">Download timetable</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDownloadPDF(c._id, c.name)}
+                    className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm font-medium transition-colors flex items-center gap-1"
+                    title="Download as PDF"
+                  >
+                    <FiDownload size={14} /> PDF
+                  </button>
+                  <button
+                    onClick={() => handleDownloadCSV(c._id, c.name)}
+                    className="px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded text-sm font-medium transition-colors flex items-center gap-1"
+                    title="Download as CSV"
+                  >
+                    <FiDownload size={14} /> CSV
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Timetable Grid */}

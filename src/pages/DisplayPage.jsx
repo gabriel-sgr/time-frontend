@@ -190,35 +190,35 @@ export default function DisplayPage() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-900 overflow-hidden">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-school-primary to-school-secondary px-2 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between shrink-0 flex-wrap md:flex-nowrap gap-2 md:gap-4">
-        <div className="flex items-center gap-2 md:gap-4 min-w-0 flex-1 md:flex-none">
+      {/* Header - Optimized for TV viewing */}
+      <header className="bg-gradient-to-r from-school-primary to-school-secondary px-6 lg:px-8 py-4 lg:py-6 flex items-center justify-between shrink-0 flex-wrap lg:flex-nowrap gap-4 lg:gap-6">
+        <div className="flex items-center gap-4 lg:gap-6 min-w-0 flex-1 lg:flex-none">
           {settings?.logo_path ? (
             <img
               src={`${API_BASE}${settings.logo_path}`}
               alt="School Logo"
-              className="w-8 md:w-10 h-8 md:h-10 object-contain bg-white rounded-full shrink-0"
+              className="w-12 lg:w-20 h-12 lg:h-20 object-contain bg-white rounded-full shrink-0"
             />
           ) : (
-            <div className="w-8 md:w-10 h-8 md:h-10 bg-school-accent rounded-full flex items-center justify-center shrink-0">
-              <span className="text-school-dark font-bold text-xs md:text-sm">LS</span>
+            <div className="w-12 lg:w-20 h-12 lg:h-20 bg-school-accent rounded-full flex items-center justify-center shrink-0">
+              <span className="text-school-dark font-bold text-sm lg:text-2xl">LS</span>
             </div>
           )}
           <div className="min-w-0">
-            <h1 className="text-white font-bold text-xs md:text-base lg:text-lg leading-tight truncate">{settings?.school_name || 'LYCEE SAINT ALEXANDRE SAULI DE MUHURA'}</h1>
-            <p className="text-blue-200 text-xs hidden sm:inline">Digital Timetable Display System</p>
+            <h1 className="text-white font-bold text-lg lg:text-3xl leading-tight truncate">{settings?.school_name || 'LYCEE SAINT ALEXANDRE SAULI DE MUHURA'}</h1>
+            <p className="text-blue-200 text-sm lg:text-lg">Digital Timetable Display System</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-4 lg:gap-6">
           <div className="text-right">
-            <div className="text-white font-mono text-lg md:text-xl lg:text-2xl font-bold">{formatTime(currentTime)}</div>
-            <div className="text-blue-200 text-xs hidden sm:block">{formatDate(currentTime)}</div>
-            <div className="mt-0.5 md:mt-1">
-              <span className={`inline-block px-1.5 md:px-2 py-0.5 rounded-full text-white text-xs font-medium ${period.color}`}>
+            <div className="text-white font-mono text-3xl lg:text-5xl font-bold">{formatTime(currentTime)}</div>
+            <div className="text-blue-200 text-sm lg:text-xl mt-2">{formatDate(currentTime)}</div>
+            <div className="mt-2 lg:mt-3">
+              <span className={`inline-block px-4 lg:px-6 py-2 lg:py-3 rounded-full text-white text-lg lg:text-2xl font-bold ${period.color}`}>
                 {period.label}
               </span>
               {currentSession?.current_period && (
-                <div className="text-blue-200 text-xs mt-0.5 hidden lg:block">
+                <div className="text-blue-200 text-base lg:text-xl mt-2">
                   {currentSession.current_period.start_time} - {currentSession.current_period.end_time}
                 </div>
               )}
@@ -229,51 +229,51 @@ export default function DisplayPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="bg-red-600 text-white text-center py-1 text-sm flex items-center justify-center gap-2">
-          <FiAlertCircle /> {error}
+        <div className="bg-red-600 text-white text-center py-2 text-lg lg:text-xl flex items-center justify-center gap-3">
+          <FiAlertCircle size={28} /> {error}
         </div>
       )}
 
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden flex-col-reverse md:flex-row">
-        {/* Announcements Sidebar - Mobile: full width bottom, Desktop: 25% right */}
-        <div className="bg-gray-800 border-l border-gray-700 flex flex-col w-full md:w-1/4 h-1/3 md:h-full md:order-last" style={{ flex: '0 0 auto' }}>
+      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row-reverse">
+        {/* Announcements Sidebar - Optimized for TV */}
+        <div className="bg-gray-800 border-l border-gray-700 flex flex-col w-full lg:w-1/4 h-1/3 lg:h-full flex-shrink-0">
           {/* Session Activity Display */}
-          <div className="bg-gradient-to-r from-school-primary to-school-secondary px-2 md:px-4 py-2 md:py-3">
+          <div className="bg-gradient-to-r from-school-primary to-school-secondary px-6 lg:px-8 py-4 lg:py-6">
             <div className="text-center">
-              <p className="text-blue-200 text-xs mb-0.5 md:mb-1">Current Session</p>
+              <p className="text-blue-200 text-base lg:text-xl mb-2 lg:mb-3">Current Session</p>
               {currentSession?.current_period ? (
                 <>
-                  <h3 className="text-white font-bold text-sm md:text-lg">{period.label}</h3>
-                  <p className="text-blue-200 text-xs mt-0.5 md:mt-1">
+                  <h3 className="text-white font-bold text-2xl lg:text-4xl">{period.label}</h3>
+                  <p className="text-blue-200 text-lg lg:text-2xl mt-2 lg:mt-3">
                     {currentSession.current_period.start_time} - {currentSession.current_period.end_time}
                   </p>
                 </>
               ) : (
-                <h3 className="text-white font-bold text-sm md:text-lg">{period.label}</h3>
+                <h3 className="text-white font-bold text-2xl lg:text-4xl">{period.label}</h3>
               )}
             </div>
           </div>
-          <div className="bg-school-accent px-2 md:px-4 py-2 md:py-3">
-            <h2 className="text-school-dark font-bold text-xs md:text-sm text-center tracking-wide">📢 ANNOUNCEMENTS</h2>
+          <div className="bg-school-accent px-6 lg:px-8 py-3 lg:py-4">
+            <h2 className="text-school-dark font-bold text-lg lg:text-2xl text-center tracking-wide">📢 ANNOUNCEMENTS</h2>
           </div>
           <div className="flex-1 relative overflow-hidden">
             {announcements.length === 0 ? (
               <div className="flex items-center justify-center h-full text-gray-500">
-                <p className="text-sm">No announcements</p>
+                <p className="text-xl lg:text-3xl">No announcements</p>
               </div>
             ) : (
               announcements.map((ann, index) => (
                 <div
                   key={ann._id}
-                  className="absolute inset-0 flex items-center justify-center p-2 md:p-4 transition-opacity duration-1000"
+                  className="absolute inset-0 flex items-center justify-center p-6 lg:p-8 transition-opacity duration-1000"
                   style={{ opacity: index === currentSlide ? 1 : 0 }}
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center">
                     {ann.type === 'text' && (
-                      <div className="text-center px-2 md:px-4 overflow-y-auto w-full">
-                        {ann.title && <h3 className="text-white text-sm md:text-xl font-bold mb-2 md:mb-3">{ann.title}</h3>}
-                        <p className="text-white leading-relaxed whitespace-pre-wrap text-xs md:text-base" style={{ fontSize: `${Math.min(ann.fontSize || 24, 18)}px` }}>{ann.content}</p>
+                      <div className="text-center px-4 lg:px-8 overflow-y-auto w-full">
+                        {ann.title && <h3 className="text-white text-2xl lg:text-4xl font-bold mb-4 lg:mb-6">{ann.title}</h3>}
+                        <p className="text-white leading-relaxed whitespace-pre-wrap text-lg lg:text-3xl" style={{ fontSize: `${Math.min(ann.fontSize || 28, 32)}px` }}>{ann.content}</p>
                       </div>
                     )}
                     {ann.type === 'image' && (
@@ -281,10 +281,10 @@ export default function DisplayPage() {
                         <img
                           src={`${API_BASE}${ann.image_path}`}
                           alt={ann.title || 'Announcement'}
-                          className="max-w-full max-h-[70%] md:max-h-[80%] object-contain rounded-lg shadow-lg"
+                          className="max-w-full max-h-[70%] lg:max-h-[80%] object-contain rounded-2xl shadow-2xl"
                         />
                         {ann.title && (
-                          <p className="text-white text-xs md:text-sm mt-2 md:mt-3 text-center font-medium">{ann.title}</p>
+                          <p className="text-white text-lg lg:text-2xl mt-4 lg:mt-6 text-center font-medium">{ann.title}</p>
                         )}
                       </>
                     )}
@@ -296,7 +296,7 @@ export default function DisplayPage() {
                           autoPlay
                           muted
                           loop
-                          className="max-w-full max-h-[70%] md:max-h-[80%] object-contain rounded-lg shadow-lg"
+                          className="max-w-full max-h-[70%] lg:max-h-[80%] object-contain rounded-2xl shadow-2xl"
                         />
                         {ann.title && (
                           <p className="text-white text-xs md:text-sm mt-2 md:mt-3 text-center font-medium">{ann.title}</p>
@@ -309,17 +309,17 @@ export default function DisplayPage() {
             )}
           </div>
           {announcements.length > 1 && (
-            <div className="flex justify-center gap-1 md:gap-1.5 py-1 md:py-2">
+            <div className="flex justify-center gap-2 lg:gap-3 py-2 lg:py-3">
               {announcements.map((_, i) => (
-                <div key={i} className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-colors ${i === currentSlide ? 'bg-school-accent' : 'bg-gray-600'}`} />
+                <div key={i} className={`w-3 h-3 lg:w-4 lg:h-4 rounded-full transition-colors ${i === currentSlide ? 'bg-school-accent' : 'bg-gray-600'}`} />
               ))}
             </div>
           )}
         </div>
 
-        {/* Timetable Grid - Mobile: full width top, Desktop: 75% left */}
+        {/* Timetable Grid - Optimized for TV */}
         <div 
-          className="flex-1 p-2 md:p-3 lg:p-4 overflow-y-auto w-full md:w-3/4 bg-cover bg-center bg-no-repeat" 
+          className="flex-1 p-6 lg:p-8 overflow-y-auto w-full lg:w-3/4 bg-cover bg-center bg-no-repeat" 
           style={{ 
             flex: '1 1 auto',
             backgroundImage: settings?.background_image_path ? `url('${API_BASE}${settings.background_image_path}')` : 'none',
@@ -329,91 +329,80 @@ export default function DisplayPage() {
           {sessions.length === 0 && getRelevantSpecialActivities().length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-400">
-                <FiClock size={32} className="mx-auto mb-2 md:mb-4 opacity-50 md:w-16 md:h-16" />
+                <FiClock size={64} className="mx-auto mb-6 lg:mb-8 opacity-50" />
                 {currentSession?.current_period ? (
                   <>
-                    <h2 className="text-xl md:text-3xl font-bold mb-1 md:mb-2 text-white">{currentSession.current_period.name}</h2>
-                    <p className="text-base md:text-xl text-blue-200">
+                    <h2 className="text-4xl lg:text-6xl font-bold mb-3 lg:mb-4 text-white">{currentSession.current_period.name}</h2>
+                    <p className="text-2xl lg:text-4xl text-blue-200">
                       {currentSession.current_period.start_time} - {currentSession.current_period.end_time}
                     </p>
                   </>
                 ) : (
                   <>
-                    <h2 className="text-lg md:text-2xl font-bold mb-1 md:mb-2">No Active Sessions</h2>
-                    <p className="text-sm md:text-lg">Check back during school hours</p>
+                    <h2 className="text-4xl lg:text-6xl font-bold mb-3 lg:mb-4">No Active Sessions</h2>
+                    <p className="text-2xl lg:text-4xl">Check back during school hours</p>
                   </>
                 )}
               </div>
             </div>
           ) : (
-            <div className="grid gap-1.5 md:gap-2 lg:gap-3 auto-rows-max"
+            <div className="grid gap-4 lg:gap-6 auto-rows-max"
               style={{
-                gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               }}
             >
-              {/* Mobile: 2 cols (120px each) 
-                  Tablet: 3 cols (160px each)
-                  Laptop: 4 cols (200px each)
-                  TV: 5-6 cols (250px each) */}
+              {/* Responsive grid: optimized for 32" TV (1920x1080 or higher) */}
               <style>{`
-                @media (min-width: 640px) {
-                  .grid {
-                    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
-                  }
-                }
-                @media (min-width: 1024px) {
-                  .grid {
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
-                  }
-                }
                 @media (min-width: 1536px) {
                   .grid {
-                    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+                    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+                    gap: 24px !important;
                   }
                 }
                 @media (min-width: 2000px) {
                   .grid {
-                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)) !important;
+                    gap: 32px !important;
                   }
                 }
               `}</style>
-              {/* Render live session cards directly from `sessions` to avoid name-matching issues */}
+              {/* Render live session cards */}
               {sessions.map((active) => {
                 const prog = getSessionProgress(active);
                 return (
-                <div key={`session-${active._id}`} className={`rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 shadow-md md:shadow-lg transition-all duration-500 animate-fade-in bg-white border border-gray-200 text-xs md:text-sm`}>
-                  <div className="flex items-center justify-between mb-2 md:mb-3">
-                    <h3 className="text-sm md:text-lg font-extrabold text-school-primary truncate">{active.class_name || active.class}</h3>
-                    <span className="bg-green-500 text-white text-xs font-bold px-1.5 md:px-2 py-0.5 rounded-full shrink-0 ml-1">LIVE</span>
+                <div key={`session-${active._id}`} className={`rounded-2xl lg:rounded-3xl p-6 lg:p-8 shadow-lg lg:shadow-2xl transition-all duration-500 animate-fade-in bg-white border-2 lg:border-4 border-gray-200 text-base lg:text-lg`}>
+                  <div className="flex items-center justify-between mb-4 lg:mb-6">
+                    <h3 className="text-xl lg:text-3xl font-extrabold text-school-primary truncate">{active.class_name || active.class}</h3>
+                    <span className="bg-green-500 text-white text-base lg:text-xl font-bold px-3 lg:px-4 py-1.5 lg:py-2 rounded-full shrink-0 ml-3">LIVE</span>
                   </div>
 
-                  <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                    <FiBook className="text-brand-500 shrink-0" size={14} />
-                    <span className="font-semibold text-gray-800 text-xs md:text-sm truncate">{active.subject_name || active.subject}</span>
+                  <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+                    <FiBook className="text-brand-500 shrink-0" size={24} />
+                    <span className="font-semibold text-gray-800 text-lg lg:text-2xl truncate">{active.subject_name || active.subject}</span>
                   </div>
 
                   {active.teacher_name && (
-                    <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                      <FiUser className="text-green-600 shrink-0" size={13} />
-                      <span className="text-gray-600 text-xs truncate">{active.teacher_name}</span>
+                    <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+                      <FiUser className="text-green-600 shrink-0" size={24} />
+                      <span className="text-gray-600 text-base lg:text-xl truncate">{active.teacher_name}</span>
                     </div>
                   )}
 
                   {active.classroom_name && (
-                    <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                      <FiMapPin className="text-red-500 shrink-0" size={13} />
-                      <span className="text-gray-600 text-xs truncate">{active.classroom_name}</span>
+                    <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+                      <FiMapPin className="text-red-500 shrink-0" size={24} />
+                      <span className="text-gray-600 text-base lg:text-xl truncate">{active.classroom_name}</span>
                     </div>
                   )}
 
-                  <div className="flex items-center gap-1 md:gap-2 mt-2 md:mt-3 pt-1 md:pt-2 border-t border-gray-100 text-xs">
-                    <FiClock className="text-gray-400 shrink-0" size={12} />
+                  <div className="flex items-center gap-2 lg:gap-3 mt-4 lg:mt-6 pt-3 lg:pt-4 border-t-2 border-gray-100 text-base lg:text-lg">
+                    <FiClock className="text-gray-400 shrink-0" size={20} />
                     <span className="text-gray-500 font-mono">{active.start_time} — {active.end_time}</span>
                     <span className="text-gray-500">•</span>
                     <span className="font-mono text-gray-600">{prog.remainingText}</span>
                   </div>
 
-                  <div className="mt-1.5 md:mt-2 h-1.5 md:h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                  <div className="mt-4 lg:mt-6 h-3 lg:h-4 w-full bg-gray-200 rounded-full overflow-hidden">
                     <div className="h-full bg-school-primary" style={{ width: `${prog.percent}%` }} />
                   </div>
                 </div>
@@ -423,37 +412,37 @@ export default function DisplayPage() {
               {getRelevantSpecialActivities().map((activity) => (
                 <div
                   key={`special-${activity._id}`}
-                  className="rounded-lg md:rounded-xl p-2 md:p-3 lg:p-4 shadow-md md:shadow-lg transition-all duration-500 animate-fade-in bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-400 text-xs md:text-sm"
+                  className="rounded-2xl lg:rounded-3xl p-6 lg:p-8 shadow-lg lg:shadow-2xl transition-all duration-500 animate-fade-in bg-gradient-to-br from-purple-50 to-purple-100 border-4 lg:border-4 border-purple-400 text-base lg:text-lg"
                 >
-                  <div className="flex items-center justify-between mb-2 md:mb-3">
-                    <h3 className="text-sm md:text-lg font-extrabold text-purple-700 flex items-center gap-1 md:gap-2 truncate">
-                      <FiStar size={14} className="shrink-0" />
+                  <div className="flex items-center justify-between mb-4 lg:mb-6">
+                    <h3 className="text-xl lg:text-3xl font-extrabold text-purple-700 flex items-center gap-3 lg:gap-4 truncate">
+                      <FiStar size={28} className="shrink-0" />
                       {activity.name}
                     </h3>
                   </div>
 
                   {activity.description && (
-                    <div className="text-xs text-purple-600 mb-1 md:mb-2 line-clamp-2">
+                    <div className="text-base lg:text-xl text-purple-600 mb-3 lg:mb-4 line-clamp-2">
                       {activity.description}
                     </div>
                   )}
 
                   {activity.location && (
-                    <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                      <FiMapPin className="text-purple-600 shrink-0" size={13} />
-                      <span className="text-gray-700 text-xs truncate">{activity.location}</span>
+                    <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+                      <FiMapPin className="text-purple-600 shrink-0" size={24} />
+                      <span className="text-gray-700 text-base lg:text-xl truncate">{activity.location}</span>
                     </div>
                   )}
 
                   {activity.responsible_teacher_id && (
-                    <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                      <FiUser className="text-purple-600 shrink-0" size={13} />
-                      <span className="text-gray-700 text-xs truncate">{activity.responsible_teacher_id.name}</span>
+                    <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+                      <FiUser className="text-purple-600 shrink-0" size={24} />
+                      <span className="text-gray-700 text-base lg:text-xl truncate">{activity.responsible_teacher_id.name}</span>
                     </div>
                   )}
 
-                  <div className="flex items-center gap-1 md:gap-2 mt-2 md:mt-3 pt-1 md:pt-2 border-t border-purple-200 text-xs">
-                    <FiClock className="text-purple-500 shrink-0" size={12} />
+                  <div className="flex items-center gap-2 lg:gap-3 mt-4 lg:mt-6 pt-3 lg:pt-4 border-t-2 border-purple-200 text-base lg:text-lg">
+                    <FiClock className="text-purple-500 shrink-0" size={20} />
                     <span className="text-gray-600 font-mono">
                       {activity.start_time} — {activity.end_time}
                     </span>

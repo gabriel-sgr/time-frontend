@@ -86,6 +86,10 @@ export const updateTimetableEntry = (id, data) => api.put(`/timetable/${id}`, da
 export const deleteTimetableEntry = (id) => api.delete(`/timetable/${id}`);
 export const generateTimetable = () => api.post('/timetable/auto-generate');
 export const validateTimetable = () => api.get('/timetable/validate');
+export const downloadTimetablePDF = (classId) => 
+  api.get(`/timetable/class/${classId}/download?format=pdf`, { responseType: 'blob' });
+export const downloadTimetableCSV = (classId) => 
+  api.get(`/timetable/class/${classId}/download?format=csv`, { responseType: 'blob' });
 
 // Announcements
 export const getAnnouncements = () => api.get('/announcements');
