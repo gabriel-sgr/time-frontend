@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiUpload, FiSave } from 'react-icons/fi';
+import { FiUpload, FiSave, FiTrash2 } from 'react-icons/fi';
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -55,6 +55,26 @@ export default function ManageSettings() {
     } catch (err) {
       console.error('Error uploading logo:', err);
       alert(err.response?.data?.message || 'Failed to upload logo');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogoDelete = async () => {
+    if (!window.confirm('Are you sure you want to remove the logo?')) return;
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      await axios.delete(`${API_URL}/settings/logo`, {
+        headers: { ...(token && { Authorization: `Bearer ${token}` }) }
+      });
+      
+      fetchSettings();
+      alert('Logo removed successfully');
+    } catch (err) {
+      console.error('Error removing logo:', err);
+      alert(err.response?.data?.message || 'Failed to remove logo');
     } finally {
       setSaving(false);
     }
@@ -155,8 +175,7 @@ export default function ManageSettings() {
     }
   };
 
-  
-  if (loading) {
+if (loading) {
     return <div className="p-8 text-center text-gray-400">Loading settings...</div>;
   }
 
@@ -168,7 +187,7 @@ export default function ManageSettings() {
         {/* Logo Upload */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">School Logo</h2>
-          
+
           <div className="mb-4">
             {settings?.logo_path ? (
               <img
@@ -200,9 +219,21 @@ export default function ManageSettings() {
               </div>
               <p className="text-xs text-gray-500 mt-1">Supported formats: JPEG, PNG, GIF, WebP, SVG (Max 5MB)</p>
             </div>
-            <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50 flex items-center gap-2">
-              <FiSave /> {saving ? 'Uploading...' : 'Update Logo'}
-            </button>
+            <div className="flex gap-2">
+              <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50 flex items-center gap-2 flex-1">
+                <FiSave /> {saving ? 'Uploading...' : 'Update Logo'}
+              </button>
+              {settings?.logo_path && (
+                <button 
+                  type="button" 
+                  disabled={saving} 
+                  onClick={handleLogoDelete}
+                  className="btn-danger disabled:opacity-50"
+                >
+                  <FiTrash2 />
+                </button>
+              )}
+            </div>
           </form>
         </div>
 
