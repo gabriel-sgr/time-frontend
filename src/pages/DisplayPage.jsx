@@ -16,6 +16,7 @@ export default function DisplayPage() {
   const [specialActivities, setSpecialActivities] = useState([]);
   const [classes, setClasses] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [classCurrentSlide, setClassCurrentSlide] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState(null);
   const [settings, setSettings] = useState(null);
@@ -94,14 +95,23 @@ export default function DisplayPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Slideshow
-  useEffect(() => {
-    if (announcements.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % announcements.length);
-    }, SLIDE_INTERVAL);
-    return () => clearInterval(timer);
-  }, [announcements.length]);
+   // Slideshow
+   useEffect(() => {
+     if (announcements.length <= 1) return;
+     const timer = setInterval(() => {
+       setCurrentSlide(prev => (prev + 1) % announcements.length);
+     }, SLIDE_INTERVAL);
+     return () => clearInterval(timer);
+   }, [announcements.length]);
+
+   // Slideshow for class cards
+   useEffect(() => {
+     if (classes.length <= 1) return;
+     const timer = setInterval(() => {
+       setClassCurrentSlide(prev => (prev + 1) % classes.length);
+     }, SLIDE_INTERVAL);
+     return () => clearInterval(timer);
+   }, [classes.length]);
 
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -227,15 +237,17 @@ export default function DisplayPage() {
         </div>
       </header>
 
-      {/* Error banner */}
-      {error && (
-        <div className="bg-red-600 text-white text-center py-2 text-lg lg:text-xl flex items-center justify-center gap-3">
-          <FiAlertCircle size={28} /> {error}
-        </div>
-      )}
+       {/* Error banner */}
+       {error && (
+         <div className="bg-red-600 text-white text-center py-2 text-lg lg:text-xl flex items-center justify-center gap-3">
+           <FiAlertCircle size={28} /> {error}
+         </div>
+       )}
 
-      {/* Main content */}
-      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row-reverse">
+       
+
+       {/* Main content */}
+       <div className="flex flex-1 overflow-hidden flex-col lg:flex-row-reverse">
         {/* Announcements Sidebar - Optimized for TV */}
         <div className="bg-gray-800 border-l border-gray-700 flex flex-col w-full lg:w-1/4 h-1/3 lg:h-full flex-shrink-0">
           {/* Session Activity Display */}
